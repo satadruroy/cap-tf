@@ -33,3 +33,13 @@ resource "kubernetes_cluster_role_binding" "tiller" {
     }
     depends_on = ["kubernetes_service_account.tiller"]
 }
+
+resource "kubernetes_storage_class" "gkesc" {
+  metadata {
+    name = "persistent"
+  }
+  storage_provisioner = "kubernetes.io/gce-pd"
+  parameters {
+    type = "pd-ssd"
+  }
+}

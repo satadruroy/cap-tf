@@ -3,7 +3,7 @@ variable "az_resource_group" {
 }
 
 variable "location" {
-    default = "useast"
+    type = "string"
 }
 
 variable "node_count" {
@@ -26,7 +26,7 @@ variable "cluster_labels" {
 }
 
 variable "k8s_version" {
-    default = "1.12.6"
+    default = "1.13.5"
 }
 variable "disk_size_gb" {
     default = 60

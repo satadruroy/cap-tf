@@ -1,4 +1,3 @@
-
 resource "random_string" "cluster_name" {
   length  = 18
   special = false
@@ -6,27 +5,6 @@ resource "random_string" "cluster_name" {
   number  = false
 }
 
-/*
-resource "azurerm_log_analytics_workspace" "test" {
-    name                = "${var.log_analytics_workspace_name}"
-    location            = "${var.log_analytics_workspace_location}"
-    resource_group_name = "${azurerm_resource_group.k8s.name}"
-    sku                 = "${var.log_analytics_workspace_sku}"
-}
-
-resource "azurerm_log_analytics_solution" "test" {
-    solution_name         = "ContainerInsights"
-    location              = "${azurerm_log_analytics_workspace.test.location}"
-    resource_group_name   = "${azurerm_resource_group.k8s.name}"
-    workspace_resource_id = "${azurerm_log_analytics_workspace.test.id}"
-    workspace_name        = "${azurerm_log_analytics_workspace.test.name}"
-
-    plan {
-        publisher = "Microsoft"
-        product   = "OMSGallery/ContainerInsights"
-    }
-}
-*/
 resource "azurerm_kubernetes_cluster" "k8s" {
     name                = "cap-${random_string.cluster_name.result}"
     location            = "${var.location}"
@@ -56,6 +34,19 @@ resource "azurerm_kubernetes_cluster" "k8s" {
     }
 
     tags = "${var.cluster_labels}"
+}
+
+resource "null_resource" "post_processor" {
+
+  provisioner "local-exec" {
+    command = "/bin/sh aks-post-processing.sh"
+
+    environment = {
+      RGNAME = "${var.az_resource_group}"
+      CLUSTER_NAME = "${azurerm_kubernetes_cluster.k8s.name}"
+      NODEPOOLNAME = "${azurerm_kubernetes_cluster.k8s.agent_pool_profile.name}"
+    }
+  }
 }
 
 output "kube_config" {
