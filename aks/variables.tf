@@ -18,7 +18,7 @@ variable "agent_admin" {
 }
 
 variable "dns_prefix" {
-    default = "sroy"
+    default = "cap-on-aks"
 }
 
 variable "cluster_labels" {
