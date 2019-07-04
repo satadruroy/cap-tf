@@ -4,13 +4,15 @@ resource "kubernetes_secret" "google_dns_sa_creds" {
     name = "dns-sa-creds"
   }
 
-  data {
+  data = {
     "credentials.json" = "${file("${var.gcp_dns_sa_key}")}"
   }
 }
 resource "helm_release" "external-dns" {
     name = "cap-external-dns"
     chart = "stable/external-dns"
+    wait = "false"
+
 
     set {
         name = "google.project"
